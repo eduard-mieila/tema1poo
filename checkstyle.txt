@@ -1,2 +1,11 @@
 Starting audit...
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\fileio\MovieInputData.java:22:27: Parameter rating should be final. [FinalParameters]
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\fileio\MovieInputData.java:44:64: '+' is not preceded with whitespace. [WhitespaceAround]
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\fileio\MovieInputData.java:44:73: '+' is not followed by whitespace. [WhitespaceAround]
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\main\Main.java:6:14: Using the '.*' form of import should be avoided - fileio.*. [AvoidStarImport]
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\main\Main.java:14:8: Unused import - java.util.List. [UnusedImports]
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\main\Main.java:16:8: Unused import - java.util.Random. [UnusedImports]
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\main\Main.java:18:15: Unused import - common.Constants.COMMAND. [UnusedImports]
+[ERROR] C:\Users\edymi\Desktop\2CA\POO\tema1\.\src\main\Main.java:19:15: Unused import - common.Constants.FAVORITE_MOVIES. [UnusedImports]
 Audit done.
+Checkstyle ends with 8 errors.

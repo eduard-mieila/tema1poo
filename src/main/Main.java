@@ -3,9 +3,7 @@ package main;
 import checker.Checkstyle;
 import checker.Checker;
 import common.Constants;
-import fileio.Input;
-import fileio.InputLoader;
-import fileio.Writer;
+import fileio.*;
 import org.json.simple.JSONArray;
 
 import java.io.File;
@@ -13,7 +11,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+
+import static common.Constants.COMMAND;
+import static common.Constants.FAVORITE_MOVIES;
 
 /**
  * The entry point to this homework. It runs the checker that tests your implentation.
@@ -75,4 +78,6 @@ public final class Main {
 
         fileWriter.closeJSON(arrayResult);
     }
+
+
 }
