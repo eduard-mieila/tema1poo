@@ -1,7 +1,6 @@
 package entertainment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Information about a season of a tv show
@@ -20,12 +19,12 @@ public final class Season {
     /**
      * List of ratings for each season
      */
-    private List<Double> ratings;
+    private HashMap<String, Double> ratings;
 
     public Season(final int currentSeason, final int duration) {
         this.currentSeason = currentSeason;
         this.duration = duration;
-        this.ratings = new ArrayList<>();
+        this.ratings = new HashMap<String, Double>();
     }
 
     public int getDuration() {
@@ -36,11 +35,11 @@ public final class Season {
         this.duration = duration;
     }
 
-    public List<Double> getRatings() {
+    public HashMap<String, Double> getRatings() {
         return ratings;
     }
 
-    public void setRatings(final List<Double> ratings) {
+    public void setRatings(final HashMap<String, Double> ratings) {
         this.ratings = ratings;
     }
 

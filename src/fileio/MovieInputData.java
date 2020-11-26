@@ -31,6 +31,6 @@ public final class MovieInputData extends ShowInput {
                 + super.getYear() + "duration= "
                 + duration + "cast {"
                 + super.getCast() + " }\n"
-                + "genres {" + super.getGenres() + "}\n ";
+                + "genres {" + super.getGenres() + " }\n ";
     }
 }

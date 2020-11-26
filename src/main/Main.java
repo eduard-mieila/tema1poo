@@ -3,7 +3,19 @@ package main;
 import checker.Checkstyle;
 import checker.Checker;
 import common.Constants;
-import fileio.*;
+import databases.ActorData;
+import databases.MovieData;
+import databases.MyDatabase;
+import databases.SerialData;
+import databases.UserData;
+import fileio.ActionInputData;
+import fileio.ActorInputData;
+import fileio.Input;
+import fileio.InputLoader;
+import fileio.MovieInputData;
+import fileio.SerialInputData;
+import fileio.UserInputData;
+import fileio.Writer;
 import org.json.simple.JSONArray;
 
 import java.io.File;
@@ -11,15 +23,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
-import static common.Constants.COMMAND;
-import static common.Constants.FAVORITE_MOVIES;
 
 /**
- * The entry point to this homework. It runs the checker that tests your implentation.
+ * The entry point to this homework. It runs the checker that tests your implementation.
  */
 public final class Main {
     /**
@@ -74,10 +82,70 @@ public final class Main {
         JSONArray arrayResult = new JSONArray();
 
         //TODO add here the entry point to your implementation
+        MyDatabase db = new MyDatabase();
+        for (ActorInputData actor : input.getActors()) {
+            ActorData newActor = new ActorData(actor);
+            db.add(newActor);
+        }
 
+        for (MovieInputData movie : input.getMovies()) {
+            MovieData newMovie = new MovieData(movie);
+            db.add(newMovie);
+        }
+
+        for (SerialInputData serial : input.getSerials()) {
+            SerialData newSerial = new SerialData(serial);
+            db.add(newSerial);
+        }
+
+        for (UserInputData user : input.getUsers()) {
+            UserData newUser = new UserData(user);
+            db.add(newUser);
+        }
+
+
+
+
+        for (ActionInputData currentAction : input.getCommands()) {
+            if (currentAction.getType() != null) {
+                if (currentAction.getType().equals("favorite")) {
+                    UserData user = db.getUser(currentAction.getUsername(), db);
+                    String result = db.addFavorite(user, currentAction.getTitle());
+                    arrayResult.add(fileWriter.writeFile(currentAction.getActionId(),
+                            null, result));
+                }
+                if (currentAction.getType().equals("view")) {
+                    UserData user = db.getUser(currentAction.getUsername(), db);
+                    String result = db.view(user, currentAction.getTitle());
+                    arrayResult.add(fileWriter.writeFile(currentAction.getActionId(),
+                            null, result));
+                }
+                if (currentAction.getType().equals("rating")) {
+                    String result;
+                    UserData user = db.getUser(currentAction.getUsername(), db);
+                    MovieData movie = db.searchMovie(currentAction.getTitle(), db);
+                    if (movie != null) {
+                        result = db.rate(user, movie, currentAction.getGrade());
+                    } else {
+                        SerialData serial = db.searchSerial(currentAction.getTitle(), db);
+                        result = db.rate(user, serial, currentAction.getSeasonNumber(),
+                                                currentAction.getGrade());
+                    }
+                    arrayResult.add(fileWriter.writeFile(currentAction.getActionId(),
+                            null, result));
+                }
+
+            }
+
+        }
 
         fileWriter.closeJSON(arrayResult);
     }
+
+
+
+
+
 
 
 }
