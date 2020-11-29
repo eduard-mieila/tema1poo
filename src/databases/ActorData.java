@@ -11,12 +11,32 @@ public final class ActorData {
     private String careerDescription;
     private ArrayList<String> filmography;
     private Map<ActorsAwards, Integer> awards;
+    private double rating;
+    private int numberOfAwards;
 
     public ActorData(final ActorInputData data) {
         this.name = data.getName();
         this.careerDescription = data.getCareerDescription();
         this.filmography = data.getFilmography();
         this.awards = data.getAwards();
+        this.rating = 0;
+        this.numberOfAwards = 0;
+    }
+
+    public int getNumberOfAwards() {
+        return numberOfAwards;
+    }
+
+    public void setNumberOfAwards(final int numberOfAwards) {
+        this.numberOfAwards = numberOfAwards;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(final double rating) {
+        this.rating = rating;
     }
 
     public String getName() {

@@ -10,6 +10,7 @@ public final class UserData {
     private String subscriptionType;
     private Map<String, Integer> history;
     private ArrayList<String> favoriteMovies;
+    private int numberOfReviews;
 
     public String getUsername() {
         return username;
@@ -32,6 +33,15 @@ public final class UserData {
         this.subscriptionType = user.getSubscriptionType();
         this.history = user.getHistory();
         this.favoriteMovies = user.getFavoriteMovies();
+        this.numberOfReviews = 0;
+    }
+
+    public int getNumberOfReviews() {
+        return numberOfReviews;
+    }
+
+    public void setNumberOfReviews(final int numberOfReviews) {
+        this.numberOfReviews = numberOfReviews;
     }
 
     @Override

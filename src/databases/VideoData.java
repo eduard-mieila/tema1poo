@@ -9,12 +9,32 @@ public class VideoData {
     private int year;
     private ArrayList<String> cast;
     private ArrayList<String> genres;
+    private int addedToFavorite;
+    private double overallRating;
 
     public VideoData(final ShowInput show) {
         this.title = show.getTitle();
         this.year = show.getYear();
         this.cast = show.getCast();
         this.genres = show.getGenres();
+        this.addedToFavorite = 0;
+        this.overallRating = 0;
+    }
+
+    /**
+     *
+     * @return overallRating
+     */
+    public double getOverallRating() {
+        return overallRating;
+    }
+
+    /**
+     *
+     * @param overallRating value of overallRating
+     */
+    public void setOverallRating(final double overallRating) {
+        this.overallRating = overallRating;
     }
 
     /**
@@ -49,6 +69,23 @@ public class VideoData {
         return genres;
     }
 
+    /**
+     *
+     * @return value of addedToFavorite
+     */
+    public int getAddedToFavorite() {
+        return addedToFavorite;
+    }
+
+
+    /**
+     *
+     * @param addedToFavorite value of addedToFavorite
+     */
+    public void setAddedToFavorite(final int addedToFavorite) {
+        this.addedToFavorite = addedToFavorite;
+    }
+
 
     /**
      *
@@ -61,6 +98,7 @@ public class VideoData {
                 + ", year=" + year
                 + ", cast=" + cast
                 + ", genres=" + genres
+                + ", addedToFavorite = " + addedToFavorite
                 + '}';
     }
 }
