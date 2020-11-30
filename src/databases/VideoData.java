@@ -5,10 +5,10 @@ import fileio.ShowInput;
 import java.util.ArrayList;
 
 public class VideoData {
-    private String title;
-    private int year;
-    private ArrayList<String> cast;
-    private ArrayList<String> genres;
+    private final String title;
+    private final int year;
+    private final ArrayList<String> cast;
+    private final ArrayList<String> genres;
     private int addedToFavorite;
     private double overallRating;
 

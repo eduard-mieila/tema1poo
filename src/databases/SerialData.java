@@ -6,8 +6,8 @@ import fileio.SerialInputData;
 import java.util.ArrayList;
 
 public final class SerialData extends VideoData {
-    private int numberOfSeasons;
-    private ArrayList<Season> seasons;
+    private final int numberOfSeasons;
+    private final ArrayList<Season> seasons;
     private int viewed;
     private int duration;
 

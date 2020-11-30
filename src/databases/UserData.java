@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public final class UserData {
-    private String username;
-    private String subscriptionType;
-    private Map<String, Integer> history;
-    private ArrayList<String> favoriteMovies;
+    private final String username;
+    private final String subscriptionType;
+    private final Map<String, Integer> history;
+    private final ArrayList<String> favoriteMovies;
     private int numberOfReviews;
 
     public String getUsername() {

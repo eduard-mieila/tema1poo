@@ -16,9 +16,7 @@ import fileio.MovieInputData;
 import fileio.SerialInputData;
 import fileio.UserInputData;
 import fileio.Writer;
-import org.json.JSONObject;
 import org.json.simple.JSONArray;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -74,6 +72,7 @@ public final class Main {
      * @param filePath2 for output file
      * @throws IOException in case of exceptions to reading / writing
      */
+    @SuppressWarnings("unchecked")
     public static void action(final String filePath1,
                               final String filePath2) throws IOException {
         InputLoader inputLoader = new InputLoader(filePath1);
@@ -134,7 +133,7 @@ public final class Main {
      * @return output text
      */
     private static String executeCommand(final MyDatabase db, final ActionInputData currentAction) {
-        String result = new String();
+        String result = null;
         UserData user = db.getUser(currentAction.getUsername());
         if (currentAction.getType().equals("favorite")) {
             result = db.addFavorite(user, currentAction.getTitle());

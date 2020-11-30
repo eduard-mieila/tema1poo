@@ -10,7 +10,7 @@ public final class ActorData {
     private String name;
     private String careerDescription;
     private ArrayList<String> filmography;
-    private Map<ActorsAwards, Integer> awards;
+    private final Map<ActorsAwards, Integer> awards;
     private double rating;
     private int numberOfAwards;
 

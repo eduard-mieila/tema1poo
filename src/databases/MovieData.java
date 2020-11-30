@@ -6,14 +6,14 @@ import java.util.HashMap;
 
 
 public final class MovieData extends VideoData {
-    private int duration;
-    private HashMap<String, Double> ratings;
+    private final int duration;
+    private final HashMap<String, Double> ratings;
     private int viewed;
 
     public MovieData(final MovieInputData movie) {
         super(movie);
         this.duration = movie.getDuration();
-        this.ratings = new HashMap<String, Double>();
+        this.ratings = new HashMap<>();
         this.viewed = 0;
     }
 

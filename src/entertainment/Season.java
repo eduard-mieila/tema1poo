@@ -24,7 +24,7 @@ public final class Season {
     public Season(final int currentSeason, final int duration) {
         this.currentSeason = currentSeason;
         this.duration = duration;
-        this.ratings = new HashMap<String, Double>();
+        this.ratings = new HashMap<>();
     }
 
     public int getDuration() {

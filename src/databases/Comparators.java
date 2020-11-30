@@ -1,14 +1,15 @@
 package databases;
 
 import java.util.Comparator;
+import java.util.Map;
 
-public final class Comparators {
+final class Comparators {
     public final static class SortByTitle implements Comparator<VideoData> {
         /**
          * Used for sorting by Title
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares two strings lexicographically.
          */
         public int compare(final VideoData a, final VideoData b) {
             return a.getTitle().compareTo(b.getTitle());
@@ -20,7 +21,7 @@ public final class Comparators {
          * Used for sorting Actors by Name
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares two strings lexicographically.
          */
         public int compare(final ActorData a, final ActorData b) {
             return a.getName().compareTo(b.getName());
@@ -32,7 +33,7 @@ public final class Comparators {
          * Used for sorting Actors by number of awards
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares number of awards
          */
         public int compare(final ActorData a, final ActorData b) {
             return a.getNumberOfAwards() - b.getNumberOfAwards();
@@ -44,7 +45,7 @@ public final class Comparators {
          * Used for sorting by Actor's rating
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares ratings
          */
         public int compare(final ActorData a, final ActorData b) {
             return Double.compare(a.getRating(), b.getRating());
@@ -56,10 +57,22 @@ public final class Comparators {
          * Used for sorting by addedToFavorite
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares addedToFavorite
          */
         public int compare(final VideoData a, final VideoData b) {
             return a.getAddedToFavorite() - b.getAddedToFavorite();
+        }
+    }
+
+    public final static class SortByFavoriteDesc implements Comparator<VideoData> {
+        /**
+         * Used for sorting by addedToFavorite
+         * @param a video A
+         * @param b video B
+         * @return Compares addedToFavorite
+         */
+        public int compare(final VideoData a, final VideoData b) {
+            return b.getAddedToFavorite() - a.getAddedToFavorite();
         }
     }
 
@@ -68,10 +81,22 @@ public final class Comparators {
          * Used for sorting by addedToFavorite
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares addedToFavorite
          */
         public int compare(final VideoData a, final VideoData b) {
             return Double.compare(a.getOverallRating(), b.getOverallRating());
+        }
+    }
+
+    public final static class SortByFinalRatingDesc implements Comparator<VideoData> {
+        /**
+         * Used for sorting by addedToFavorite
+         * @param a video A
+         * @param b video B
+         * @return Compares addedToFavorite
+         */
+        public int compare(final VideoData a, final VideoData b) {
+            return Double.compare(b.getOverallRating(), a.getOverallRating());
         }
     }
 
@@ -80,7 +105,7 @@ public final class Comparators {
          * Used for sorting movies by duration
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares duration
          */
         public int compare(final MovieData a, final MovieData b) {
             return a.getDuration() - b.getDuration();
@@ -92,7 +117,7 @@ public final class Comparators {
          * Used for sorting movies by duration
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares duration
          */
         public int compare(final SerialData a, final SerialData b) {
             return a.getDuration() - b.getDuration();
@@ -104,7 +129,7 @@ public final class Comparators {
          * Used for sorting movies by times viewed
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares viewed field
          */
         public int compare(final MovieData a, final MovieData b) {
             return a.getViewed() - b.getViewed();
@@ -116,7 +141,7 @@ public final class Comparators {
          * Used for sorting serials by times viewed
          * @param a video A
          * @param b video B
-         * @return
+         * @return compares viewed field
          */
         public int compare(final SerialData a, final SerialData b) {
             return a.getViewed() - b.getViewed();
@@ -128,7 +153,7 @@ public final class Comparators {
          * Used for sorting movies by duration
          * @param a video A
          * @param b video B
-         * @return
+         * @return compares numberOfReviews
          */
         public int compare(final UserData a, final UserData b) {
             return a.getNumberOfReviews() - b.getNumberOfReviews();
@@ -140,10 +165,22 @@ public final class Comparators {
          * Used for sorting movies by duration
          * @param a video A
          * @param b video B
-         * @return
+         * @return Compares two strings lexicographically.
          */
         public int compare(final UserData a, final UserData b) {
             return a.getUsername().compareTo(b.getUsername());
+        }
+    }
+
+    public final static class SortGenreByViews implements Comparator<Map.Entry<String, Integer>> {
+        /**
+         * Used for sorting movies by duration
+         * @param a video A
+         * @param b video B
+         * @return Compares two strings lexicographically.
+         */
+        public int compare(final Map.Entry<String, Integer> a, final Map.Entry<String, Integer> b) {
+            return a.getValue().compareTo(b.getValue());
         }
     }
 }

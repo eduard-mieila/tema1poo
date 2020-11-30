@@ -3,9 +3,14 @@ package databases;
 
 import actor.ActorsAwards;
 import entertainment.Season;
-import java.util.Map;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class MyDatabase {
     private final ArrayList<ActorData> actors = new ArrayList<>();
@@ -79,9 +84,11 @@ public final class MyDatabase {
      * @return serial if found, else null
      */
     public SerialData searchSerial(final String title) {
-        for (SerialData serial : this.getSerials()) {
-            if (serial.getTitle().equals(title)) {
-                return serial;
+        if (title != null) {
+            for (SerialData serial : this.getSerials()) {
+                if (serial.getTitle().equals(title)) {
+                    return serial;
+                }
             }
         }
         return null;
@@ -137,16 +144,20 @@ public final class MyDatabase {
      * @return message success/fail to be written in JSONArray at output
      */
     public String rate(final UserData user, final MovieData movie, final double grade) {
-        if (user.getHistory().containsKey(movie.getTitle())) {
-            if (movie.getRatings().containsKey(user.getUsername())) {
-                return "error -> " + movie.getTitle() + " has been already rated";
+        if (user != null) {
+            if (user.getHistory().containsKey(movie.getTitle())) {
+                if (movie.getRatings().containsKey(user.getUsername())) {
+                    return "error -> " + movie.getTitle() + " has been already rated";
+                } else {
+                    movie.getRatings().put(user.getUsername(), grade);
+                    return "success -> " + movie.getTitle() + " was rated with " + grade + " by "
+                            + user.getUsername();
+                }
             } else {
-                movie.getRatings().put(user.getUsername(), grade);
-                return "success -> " + movie.getTitle() + " was rated with " + grade + " by "
-                        + user.getUsername();
+                return "error -> " + movie.getTitle() + " is not seen";
             }
         } else {
-            return "error -> " + movie.getTitle() + " is not seen";
+            return "fatal error -> user does not exist!";
         }
     }
 
@@ -219,6 +230,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected at output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryFavoriteMovies(final List<List<String>> filters,
                                              final String sortType, final int n) {
         ArrayList<MovieData> result = (ArrayList<MovieData>) this.movies.clone();
@@ -253,6 +265,7 @@ public final class MyDatabase {
      * @param n maximum number of elements expected as output
      * @return text result
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryRatingMovies(final List<List<String>> filters,
                                               final String sortType, final int n) {
         ArrayList<MovieData> result = (ArrayList<MovieData>) this.movies.clone();
@@ -286,6 +299,7 @@ public final class MyDatabase {
      * @param n maximum number of elements expected as output
      * @return text result
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryRatingSerials(final List<List<String>> filters,
                                            final String sortType, final int n) {
         ArrayList<SerialData> result = (ArrayList<SerialData>) this.serials.clone();
@@ -319,6 +333,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected at output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryFavoriteSerials(final List<List<String>> filters,
                                               final String sortType, final int n) {
         ArrayList<SerialData> result = (ArrayList<SerialData>) this.serials.clone();
@@ -352,6 +367,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected at output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryLongestMovies(final List<List<String>> filters,
                                             final String sortType, final int n) {
         ArrayList<MovieData> result = (ArrayList<MovieData>) this.movies.clone();
@@ -382,6 +398,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected at output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryLongestSerials(final List<List<String>> filters,
                                             final String sortType, final int n) {
         ArrayList<SerialData> result = (ArrayList<SerialData>) this.serials.clone();
@@ -413,6 +430,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected at output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryMostViewedMovies(final List<List<String>> filters,
                                                final String sortType, final int n) {
         ArrayList<MovieData> result = (ArrayList<MovieData>) this.movies.clone();
@@ -446,6 +464,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected at output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryMostViewedSerials(final List<List<String>> filters,
                                                final String sortType, final int n) {
         ArrayList<SerialData> result = (ArrayList<SerialData>) this.serials.clone();
@@ -453,6 +472,7 @@ public final class MyDatabase {
         getViewedRankingSerials(result);
         result.removeIf(e -> e.getViewed() == 0);
 
+        result.sort(new Comparators.SortByTitle());
         result.sort(new Comparators.SortByViewedSerial());
 
         if (sortType.equals("desc")) {
@@ -468,7 +488,6 @@ public final class MyDatabase {
         }
 
         return outText;
-
     }
 
 
@@ -478,18 +497,27 @@ public final class MyDatabase {
      * @param sortType asc/desc
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryDescriptionActors(final List<List<String>> filters,
                                                 final String sortType) {
         ArrayList<ActorData> result = (ArrayList<ActorData>) this.actors.clone();
         for (String keyword : filters.get(2)) {
-            result.removeIf(currentActor -> !currentActor.getCareerDescription().toLowerCase()
-                    .contains(keyword.toLowerCase()));
+            Iterator<ActorData> iter = result.iterator();
+            while (iter.hasNext()) {
+                ActorData currentActor = iter.next();
+                Pattern pattern = Pattern.compile("[^a-zA-z]" + keyword + "[^a-zA-z]",
+                                                        Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(currentActor.getCareerDescription());
+                if (!matcher.find()) {
+                    iter.remove();
+                }
+            }
         }
 
         result.sort(new Comparators.SortByName());
 
         if (sortType.equals("desc")) {
-            reverseOrderActors(result);
+            result = reverseOrderActors(result);
         }
 
         StringBuilder outText = new StringBuilder();
@@ -523,11 +551,15 @@ public final class MyDatabase {
      * @param sortType asc/desc
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryAwardsActors(final List<List<String>> filters,
                                                 final String sortType) {
         ArrayList<ActorData> result = (ArrayList<ActorData>) this.actors.clone();
-        for (String award : filters.get(3)) {
-            result.removeIf(e -> !(e.getAwards().containsKey(award)));
+
+        final int positionInFilters = 3;
+        for (String award : filters.get(positionInFilters)) {
+            ActorsAwards awardEnum = ActorsAwards.valueOf(award);
+            result.removeIf(e -> !(e.getAwards().containsKey(awardEnum)));
         }
 
         getNumberOfAwardsActor(result);
@@ -554,6 +586,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected as output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryAverageActors(final String sortType, final int n) {
         ArrayList<ActorData> result = (ArrayList<ActorData>) this.actors.clone();
 
@@ -587,6 +620,7 @@ public final class MyDatabase {
      * @param n number of maximum elements expected as output
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder queryUsers(final String sortType, final int n) {
         ArrayList<UserData> result = (ArrayList<UserData>) this.users.clone();
         getNumberOfReviewsUsers(result);
@@ -603,7 +637,7 @@ public final class MyDatabase {
         StringBuilder outText = new StringBuilder();
         for (int i = 0; i < result.size() && i < n; i++) {
             outText.append(result.get(i).getUsername());
-            if (i < result.size() - 1) {
+            if (i < result.size() - 1 && i < n - 1) {
                 outText.append(", ");
             }
         }
@@ -634,27 +668,29 @@ public final class MyDatabase {
      * @param user user that requests the query
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public String getBestUnseen(final UserData user) {
         ArrayList<SerialData> copyOfSerials = (ArrayList<SerialData>) this.serials.clone();
         ArrayList<MovieData> copyOfMovies = (ArrayList<MovieData>) this.movies.clone();
 
+        copyOfMovies.removeIf(e -> user.getHistory().containsKey(e.getTitle()));
+        copyOfSerials.removeIf(e -> user.getHistory().containsKey(e.getTitle()));
+
         getRatingSerials(copyOfSerials);
         getRatingMovies(copyOfMovies);
 
-        copyOfSerials.sort(new Comparators.SortByFinalRating());
-        copyOfMovies.sort(new Comparators.SortByFinalRating());
+        ArrayList<VideoData> moviesAndSerials = new ArrayList<>();
+        moviesAndSerials.addAll(copyOfMovies);
+        moviesAndSerials.addAll(copyOfSerials);
 
-        for (MovieData currentMovie : copyOfMovies) {
-            if (!user.getHistory().containsKey(currentMovie.getTitle())) {
-                return "BestRatedUnseenRecommendation result: " + currentMovie.getTitle();
-            }
+        moviesAndSerials.sort(new Comparators.SortByFinalRatingDesc());
+
+        if (moviesAndSerials.size() != 0) {
+            return "BestRatedUnseenRecommendation result: "
+                    + moviesAndSerials.get(0).getTitle();
+        } else {
+            return "BestRatedUnseenRecommendation cannot be applied!";
         }
-        for (SerialData currentSerial : copyOfSerials) {
-            if (!user.getHistory().containsKey(currentSerial.getTitle())) {
-                return "BestRatedUnseenRecommendation result: " + currentSerial.getTitle();
-            }
-        }
-        return "BestRatedUnseenRecommendation cannot be applied!";
     }
 
     /**
@@ -666,13 +702,66 @@ public final class MyDatabase {
         StringBuilder output = new StringBuilder();
 
         if (user.getSubscriptionType().equals("PREMIUM")) {
-            output.append("PopularRecommendation is not ready yet :(");
+            ArrayList<Map.Entry<String, Integer>> genresRanking = getFavoriteGenreRanking();
+            for (int i = 0; i < genresRanking.size(); i++) {
+                ArrayList<VideoData> moviesAndSerials = new ArrayList<>();
+                moviesAndSerials.addAll(this.movies);
+                moviesAndSerials.addAll(this.serials);
+                int finalI = i;
+                moviesAndSerials.removeIf(e -> e.getGenres()
+                        .contains(genresRanking.get(finalI).getKey()));
+                moviesAndSerials.removeIf(e -> user.getHistory().containsKey(e.getTitle()));
+
+
+
+                if (moviesAndSerials.size() != 0) {
+                    output.append("PopularRecommendation result: ");
+                    output.append(moviesAndSerials.get(0).getTitle());
+                    return output;
+                }
+            }
+            output.append("PopularRecommendation cannot be applied!");
+
         } else {
             output.append("PopularRecommendation cannot be applied!");
         }
 
-
         return output;
+    }
+
+    private ArrayList<Map.Entry<String, Integer>> getFavoriteGenreRanking() {
+        HashMap<String, Integer> genreMap = new HashMap<>();
+
+        getViewedRankingMovies(this.movies);
+        getViewedRankingSerials(this.serials);
+
+        for (MovieData currentMovie : this.movies) {
+            for (String currentGenre : currentMovie.getGenres()) {
+                if (genreMap.containsKey(currentGenre)) {
+                    genreMap.put(currentGenre, genreMap.get(currentGenre)
+                            + currentMovie.getViewed());
+                } else {
+                    genreMap.put(currentGenre, currentMovie.getViewed());
+                }
+            }
+        }
+
+        for (SerialData serialData : this.serials) {
+            for (String currentGenre : serialData.getGenres()) {
+                if (genreMap.containsKey(currentGenre)) {
+                    genreMap.put(currentGenre, genreMap.get(currentGenre)
+                            + serialData.getViewed());
+                } else {
+                    genreMap.put(currentGenre, serialData.getViewed());
+                }
+            }
+        }
+
+        ArrayList<Map.Entry<String, Integer>> genreRanking = new ArrayList<>(genreMap.entrySet());
+        genreRanking.sort(new Comparators.SortGenreByViews());
+
+
+        return genreRanking;
     }
 
 
@@ -681,26 +770,49 @@ public final class MyDatabase {
      * @param user user that requests the query
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public String getMostFavorite(final UserData user) {
         if (user.getSubscriptionType().equals("PREMIUM")) {
             ArrayList<SerialData> copyOfSerials = (ArrayList<SerialData>) this.serials.clone();
             ArrayList<MovieData> copyOfMovies = (ArrayList<MovieData>) this.movies.clone();
 
+            copyOfMovies.removeIf(e -> user.getHistory().containsKey(e.getTitle()));
+            copyOfSerials.removeIf(e -> user.getHistory().containsKey(e.getTitle()));
+
             getFavoriteRankingSerials(copyOfSerials);
             getFavoriteRankingMovies(copyOfMovies);
 
-            copyOfSerials.sort(new Comparators.SortByFavorite());
-            copyOfMovies.sort(new Comparators.SortByFavorite());
+            copyOfMovies.removeIf(e -> e.getAddedToFavorite() == 0);
+            copyOfSerials.removeIf(e -> e.getAddedToFavorite() == 0);
 
-            for (MovieData currentMovie : copyOfMovies) {
-                if (!user.getHistory().containsKey(currentMovie.getTitle())) {
-                    return "FavoriteRecommendation result: " + currentMovie.getTitle();
-                }
+            ArrayList<VideoData> moviesAndSerials = new ArrayList<>();
+            moviesAndSerials.addAll(copyOfMovies);
+            moviesAndSerials.addAll(copyOfSerials);
+            moviesAndSerials.sort(new Comparators.SortByFavorite());
+            int maxAddedToFavorite = 0;
+            if (moviesAndSerials.size() != 0) {
+                maxAddedToFavorite = moviesAndSerials.get(moviesAndSerials.size() - 1)
+                                            .getAddedToFavorite();
             }
-            for (SerialData currentSerial : copyOfSerials) {
-                if (!user.getHistory().containsKey(currentSerial.getTitle())) {
-                    return "FavoriteRecommendation result: " + currentSerial.getTitle();
+
+
+            if (moviesAndSerials.size() != 0) {
+                for (MovieData currentMovie : copyOfMovies) {
+                    if (currentMovie.getAddedToFavorite() == maxAddedToFavorite) {
+                        this.view(user, currentMovie.getTitle());
+                        return "FavoriteRecommendation result: "
+                                + currentMovie.getTitle();
+                    }
                 }
+
+                for (SerialData currentSerial : copyOfSerials) {
+                    if (currentSerial.getAddedToFavorite() == maxAddedToFavorite) {
+                        return "FavoriteRecommendation result: "
+                                + currentSerial.getTitle();
+                    }
+                }
+            } else {
+                return "FavoriteRecommendation cannot be applied!";
             }
         }
         return "FavoriteRecommendation cannot be applied!";
@@ -711,41 +823,37 @@ public final class MyDatabase {
      * @param user user that requests the query
      * @return output text
      */
+    @SuppressWarnings("unchecked")
     public StringBuilder getSearch(final UserData user, final String genre) {
         StringBuilder output = new StringBuilder();
         if (user.getSubscriptionType().equals("PREMIUM")) {
             ArrayList<SerialData> copyOfSerials = (ArrayList<SerialData>) this.serials.clone();
             ArrayList<MovieData> copyOfMovies = (ArrayList<MovieData>) this.movies.clone();
 
-            getRatingSerials(copyOfSerials);
-            getRatingMovies(copyOfMovies);
-
             copyOfMovies.removeIf(e -> !e.getGenres().contains(genre));
             copyOfSerials.removeIf(e -> !e.getGenres().contains(genre));
 
-            copyOfSerials.sort(new Comparators.SortByTitle());
-            copyOfMovies.sort(new Comparators.SortByTitle());
-            copyOfSerials.sort(new Comparators.SortByFinalRating());
-            copyOfMovies.sort(new Comparators.SortByFinalRating());
+            copyOfMovies.removeIf(e -> user.getHistory().containsKey(e.getTitle()));
+            copyOfSerials.removeIf(e -> user.getHistory().containsKey(e.getTitle()));
 
-            if (copyOfMovies.size() == 0 && copyOfSerials.size() == 0) {
+            getRatingSerials(copyOfSerials);
+            getRatingMovies(copyOfMovies);
+
+            ArrayList<VideoData> moviesAndSerials = new ArrayList<>();
+            moviesAndSerials.addAll(copyOfMovies);
+            moviesAndSerials.addAll(copyOfSerials);
+
+            moviesAndSerials.sort(new Comparators.SortByTitle());
+            moviesAndSerials.sort(new Comparators.SortByFinalRating());
+
+
+            if (moviesAndSerials.size() == 0) {
                 output.append("SearchRecommendation cannot be applied!");
             } else {
                 output.append("SearchRecommendation result: [");
-
-                for (MovieData currentMovie : copyOfMovies) {
-                    if (!user.getHistory().containsKey(currentMovie.getTitle())) {
-                        output.append(currentMovie.getTitle());
-                    }
-                    if (copyOfMovies.indexOf(currentMovie) < copyOfMovies.size() - 1) {
-                        output.append(", ");
-                    }
-                }
-                for (SerialData currentSerial : copyOfSerials) {
-                    if (!user.getHistory().containsKey(currentSerial.getTitle())) {
-                        output.append(currentSerial.getTitle());
-                    }
-                    if (copyOfSerials.indexOf(currentSerial) < copyOfSerials.size() - 1) {
+                for (VideoData currentVideo : moviesAndSerials) {
+                    output.append(currentVideo.getTitle());
+                    if (moviesAndSerials.indexOf(currentVideo) < moviesAndSerials.size() - 1) {
                         output.append(", ");
                     }
                 }
@@ -762,9 +870,10 @@ public final class MyDatabase {
      * Generate rating for each actor given in list
      * @param list list of actors
      */
+    @SuppressWarnings("unchecked")
     private void getActorsRating(final ArrayList<ActorData> list) {
         double numberOfVideos;
-        double rating;
+        double actorRating;
         ArrayList<SerialData> copyOfSerials = (ArrayList<SerialData>) this.serials.clone();
         ArrayList<MovieData> copyOfMovies = (ArrayList<MovieData>) this.movies.clone();
 
@@ -774,11 +883,11 @@ public final class MyDatabase {
 
         for (ActorData currentActor : list) {
             numberOfVideos = 0;
-            rating = 0;
+            actorRating = 0;
             for (SerialData currentSerial : copyOfSerials) {
                 if (currentSerial.getCast().contains(currentActor.getName())) {
                     if (currentSerial.getOverallRating() != 0) {
-                        rating += currentSerial.getOverallRating();
+                        actorRating += currentSerial.getOverallRating();
                         numberOfVideos = numberOfVideos + 1;
                     }
                 }
@@ -787,14 +896,16 @@ public final class MyDatabase {
             for (MovieData currentMovie : copyOfMovies) {
                 if (currentMovie.getCast().contains(currentActor.getName())) {
                     if (currentMovie.getOverallRating() != 0) {
-                        rating += currentMovie.getOverallRating();
+                        actorRating = actorRating + currentMovie.getOverallRating();
                         numberOfVideos = numberOfVideos + 1;
                     }
                 }
             }
             if (numberOfVideos != 0) {
-                rating /= numberOfVideos;
-                currentActor.setRating(rating);
+                actorRating /= numberOfVideos;
+                currentActor.setRating(actorRating);
+            } else {
+                currentActor.setRating(0);
             }
 
         }
@@ -847,7 +958,8 @@ public final class MyDatabase {
             currentMovie.setViewed(0);
             for (UserData currentUser : this.users) {
                 if (currentUser.getHistory().containsKey(currentMovie.getTitle())) {
-                    currentMovie.setViewed(currentMovie.getViewed() + 1);
+                    currentMovie.setViewed(currentMovie.getViewed()
+                            + currentUser.getHistory().get(currentMovie.getTitle()));
                 }
             }
         }
@@ -862,7 +974,8 @@ public final class MyDatabase {
             currentSerial.setViewed(0);
             for (UserData currentUser : this.users) {
                 if (currentUser.getHistory().containsKey(currentSerial.getTitle())) {
-                    currentSerial.setViewed(currentSerial.getViewed() + 1);
+                    currentSerial.setViewed(currentSerial.getViewed()
+                            + currentUser.getHistory().get(currentSerial.getTitle()));
                 }
             }
         }
@@ -951,8 +1064,9 @@ public final class MyDatabase {
     }
 
     private void getRatingMovies(final ArrayList<MovieData> list) {
-        double rating = 0;
+        double rating;
         for (MovieData currentMovie : list) {
+            rating = 0;
             for (Map.Entry<String, Double> currentRating : currentMovie.getRatings().entrySet()) {
                 rating += currentRating.getValue();
             }
