@@ -1,8 +1,15 @@
-# tema1poo
-Programare Orientata pe Obiecte - 2CA - Tema - VideosDB
-MIEILĂ Eduard-Robert, 323CA
+# VideosDB
 
-Pentru rezolvarea acestei teme am inceput cu crearea unui Database, reprezentat
+## Descriere generală
+Aplicația implementează o bază de date simplificată pentru filme, seriale și actori, similară cu IMDb. Utilizatorii pot fi de diferite tipuri și pot marca fimlele sau serialele ca vizionate, le pot adăuga la lista de favorite și le pot acorda o notă. Tot ei pot solicita ercomandări sau pot căuta un anumit film sau serial.
+Interogările care se pot face p e baza de date pot oferi clasamente cu actori(in ordinea notelor pe care filmele acestora le-au obtinuit/după numărul de premii pe care aceștia le-au primit) sau clasamente cu filme sau seriale(sortate după rating-ul acordat de utilizatori, după durata acestora, după numărul vizualizărilor, etc.).
+
+## How to use
+Aplicația rulează prin intermediul clasei Main, aceasta efectuând teste de corectitudine asupra bazei de date. Implementarea a fost efectuată în pachetul databases.
+
+
+## Detalii suplimentare despre implementare
+Pentru rezolvarea acestei probleme am inceput cu crearea unui Database, reprezentat
 de clasa MyDatabase, in care am stocat toate datele primite in variabila input
 din metoda action. MyDatabase contine 4 ArrayList-uri, cate unul pentru fiecare
 dintre Actor/Movie/Serial/UserData. Aceste entitati au o structura similara cu
@@ -54,9 +61,3 @@ Utils. In ultima gasim metode ce calculeaza campurile suplimentare adaugate in
 clasele de tip Data din database. Aceste campuri sunt utile pe parcursul inte-
 rogarilor si a recomandarilor. Tot aici gasim si metode de search prin baza de
 date si alte metode utile.
-
-In rezolvarea temei am folosit Git pentru versionare:
-git clone https://github.com/eduard-mieila/tema1poo.git
-
-
-
