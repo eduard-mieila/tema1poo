@@ -1,4 +1,4 @@
-# VideosDB
+# Videos Database
 
 ## Descriere generală
 Aplicația implementează o bază de date simplificată pentru filme, seriale și actori, similară cu IMDb. Utilizatorii pot fi de diferite tipuri și pot marca fimlele sau serialele ca vizionate, le pot adăuga la lista de favorite și le pot acorda o notă. Tot ei pot solicita ercomandări sau pot căuta un anumit film sau serial.
